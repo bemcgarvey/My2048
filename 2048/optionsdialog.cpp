@@ -12,3 +12,15 @@ OptionsDialog::~OptionsDialog()
 {
     delete ui;
 }
+
+void OptionsDialog::on_buttonBox_accepted()
+{
+    close();
+}
+
+
+void OptionsDialog::on_buttonBox_rejected()
+{
+    close();
+}
+

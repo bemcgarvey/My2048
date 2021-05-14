@@ -48,5 +48,5 @@ bool Tile::operator==(const Tile &rhs) const
 
 
 //TODO select a good set of colors
-QVector<QColor> Tile::colorList = {Qt::yellow, Qt::magenta, Qt::green, Qt::blue, Qt::red, Qt::darkYellow};
+QVector<QColor> Tile::colorList = {Qt::yellow, Qt::magenta, Qt::green, Qt::blue, Qt::red, Qt::darkYellow, QColor(128, 128, 128), QColor(36, 250, 198)};
 QVector<QColor> Tile::fontColors = {Qt::blue, Qt::yellow, Qt::white, Qt::white, Qt::lightGray, Qt::white};

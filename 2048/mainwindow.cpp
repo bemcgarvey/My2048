@@ -3,10 +3,10 @@
 #include <QMessageBox>
 #include <QSettings>
 #include "aboutdialog.h"
+#include "optionsdialog.h"
 
 //TODO implement undo
 //TODO implement save and load
-//TODO about dialog and icon
 //TODO remove any qDebugs
 //TODO options - size, start tiles, undo depth, background color, winning tile
 
@@ -110,6 +110,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog *dlg = new AboutDialog(this);
+    dlg->exec();
+    delete dlg;
+}
+
+
+void MainWindow::on_actionOptions_triggered()
+{
+    OptionsDialog *dlg = new OptionsDialog(this);
     dlg->exec();
     delete dlg;
 }
