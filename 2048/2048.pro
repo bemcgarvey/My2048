@@ -9,22 +9,33 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    aboutdialog.cpp \
     grid.cpp \
     gridframe.cpp \
     main.cpp \
     mainwindow.cpp \
+    optionsdialog.cpp \
     tile.cpp
 
 HEADERS += \
+    aboutdialog.h \
     grid.h \
     gridframe.h \
     mainwindow.h \
+    optionsdialog.h \
     tile.h
 
 FORMS += \
-    mainwindow.ui
+    aboutdialog.ui \
+    mainwindow.ui \
+    optionsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    images.qrc
+
+win32:RC_ICONS += images/icon.ico

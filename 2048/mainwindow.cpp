@@ -2,12 +2,13 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include <QSettings>
+#include "aboutdialog.h"
 
 //TODO implement undo
 //TODO implement save and load
 //TODO about dialog and icon
 //TODO remove any qDebugs
-//TODO options???
+//TODO options - size, start tiles, undo depth, background color, winning tile
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -105,3 +106,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
     settings.setValue("Most Moves", mostMoves);
     settings.setValue("Largest Tile", largestTile);
 }
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutDialog *dlg = new AboutDialog(this);
+    dlg->exec();
+    delete dlg;
+}
+
