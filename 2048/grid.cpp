@@ -118,8 +118,67 @@ bool Grid::shift(direction dir)
             }
         }
         break;
+    case shiftDown:
+        for (int c = 0; c < size; ++c) {
+            int limit = size - 1;
+            for (int r = size - 2; r >= 0; --r) {
+                if (grid[r][c] != nullptr) {
+                    int newRow = r + 1;
+                    while ((newRow < limit) && grid[newRow][c] == nullptr) {
+                        ++newRow;
+                    }
+                    if (grid[newRow][c] == nullptr) {
+                        grid[newRow][c] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[newRow][c]->move(newRow, c);
+                        modified = true;
+                    } else if(*grid[r][c] == *grid[newRow][c]) {
+                        grid[newRow][c]->merge(*grid[r][c]);
+                        delete grid[r][c];
+                        grid[r][c] = nullptr;
+                        limit = newRow - 1;
+                        modified = true;
+                    } else if (newRow - 1 > r){
+                        grid[newRow - 1][c] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[newRow - 1][c]->move(newRow - 1, c);
+                        modified = true;
+                    }
+                }
+            }
+        }
+        break;
+    case shiftUp:
+        for (int c = 0; c < size; ++c) {
+            int limit = 0;
+            for (int r = 1; r < size; ++r) {
+                if (grid[r][c] != nullptr) {
+                    int newRow = r - 1;
+                    while ((newRow > limit) && grid[newRow][c] == nullptr) {
+                        --newRow;
+                    }
+                    if (grid[newRow][c] == nullptr) {
+                        grid[newRow][c] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[newRow][c]->move(newRow, c);
+                        modified = true;
+                    } else if(*grid[r][c] == *grid[newRow][c]) {
+                        grid[newRow][c]->merge(*grid[r][c]);
+                        delete grid[r][c];
+                        grid[r][c] = nullptr;
+                        limit = newRow + 1;
+                        modified = true;
+                    } else if (newRow + 1 < r){
+                        grid[newRow + 1][c] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[newRow + 1][c]->move(newRow + 1, c);
+                        modified = true;
+                    }
+                }
+            }
+        }
+        break;
     }
-
     return modified;
 }
 
