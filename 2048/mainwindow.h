@@ -18,14 +18,22 @@ public:
     ~MainWindow();
 public slots:
     void onScoreUpdate(int score, int moves, int largestTile);
+    void onLostGame();
 private slots:
     void on_actionRestart_triggered();
     void on_actionExit_triggered();
-
 private:
     Ui::MainWindow *ui;
     Grid *grid;
     QLabel *scoreLabel;
     QLabel *movesLabel;
+    int winningTile;
+    bool hasBeenWon;
+    void restartGame();
+    int highScore;
+    int mostMoves;
+    int largestTile;
+protected:
+    virtual void closeEvent(QCloseEvent *event) override;
 };
 #endif // MAINWINDOW_H

@@ -3,7 +3,7 @@
 #include <QDebug>
 
 Grid::Grid(int size, int startTile) : size(size), score(0)
-  , largestTile(0), moves(0), emptySpaces(size * size)
+  , largestTile(2), moves(0), emptySpaces(size * size)
 {
     for (int i = 0; i < size; ++i) {
         grid.append(QVector<Tile *>(size, nullptr));
@@ -39,9 +39,26 @@ bool Grid::insertRandomTile()
     return true;
 }
 
-bool Grid::hasAvailable() const
+bool Grid::isLost() const
 {
-    return emptySpaces != 0;
+    if (emptySpaces > 0) {
+        return false;
+    }
+    for (int r = 0; r < size; ++r) {
+        for (int c = 0; c < size - 1; ++c) {
+            if (*grid[r][c] == *grid[r][c + 1]) {
+                return false;
+            }
+        }
+    }
+    for (int c = 0; c < size; ++c) {
+        for (int r = 0; r < size - 1; ++r) {
+            if (*grid[r][c] == *grid[r + 1][c]) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 QList<const Tile *> Grid::tiles() const
@@ -76,7 +93,11 @@ bool Grid::shift(direction dir)
                         grid[r][newCol]->move(r, newCol);
                         modified = true;
                     } else if(*grid[r][c] == *grid[r][newCol]) {
-                        score += grid[r][newCol]->merge(*grid[r][c]);
+                        int newTileValue = grid[r][newCol]->merge(*grid[r][c]);
+                        score += newTileValue;
+                        if (newTileValue > largestTile) {
+                            largestTile = newTileValue;
+                        }
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newCol - 1;
@@ -106,7 +127,11 @@ bool Grid::shift(direction dir)
                         grid[r][newCol]->move(r, newCol);
                         modified = true;
                     } else if(*grid[r][c] == *grid[r][newCol]) {
-                        score += grid[r][newCol]->merge(*grid[r][c]);
+                        int newTileValue = grid[r][newCol]->merge(*grid[r][c]);
+                        score += newTileValue;
+                        if (newTileValue > largestTile) {
+                            largestTile = newTileValue;
+                        }
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newCol + 1;
@@ -136,7 +161,11 @@ bool Grid::shift(direction dir)
                         grid[newRow][c]->move(newRow, c);
                         modified = true;
                     } else if(*grid[r][c] == *grid[newRow][c]) {
-                        score += grid[newRow][c]->merge(*grid[r][c]);
+                        int newTileValue = grid[newRow][c]->merge(*grid[r][c]);
+                        score += newTileValue;
+                        if (newTileValue > largestTile) {
+                            largestTile = newTileValue;
+                        }
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newRow - 1;
@@ -166,7 +195,11 @@ bool Grid::shift(direction dir)
                         grid[newRow][c]->move(newRow, c);
                         modified = true;
                     } else if(*grid[r][c] == *grid[newRow][c]) {
-                        score += grid[newRow][c]->merge(*grid[r][c]);
+                        int newTileValue = grid[newRow][c]->merge(*grid[r][c]);
+                        score += newTileValue;
+                        if (newTileValue > largestTile) {
+                            largestTile = newTileValue;
+                        }
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newRow + 1;
