@@ -3,6 +3,8 @@
 #include <QResizeEvent>
 #include <QDebug>
 
+//TODO add swipe using QTouchEvents?
+
 GridFrame::GridFrame(QWidget *parent) : QFrame(parent), grid(nullptr)
 {
     grabKeyboard();
@@ -47,14 +49,19 @@ void GridFrame::paintEvent(QPaintEvent *event)
         painter.setBrush(brush);
         int r = i->getRow();
         int c = i->getCol();
-        QRect rect(leftBorder + borderWidth + c * (borderWidth + tileSize)
-                   , borderWidth + r * (borderWidth + tileSize), tileSize, tileSize);
-        painter.drawRect(rect);
+        QRect rect(leftBorder + 1 + borderWidth + c * (borderWidth + tileSize)
+                   , borderWidth + 1 + r * (borderWidth + tileSize), tileSize - 2, tileSize - 2);
+        painter.drawRoundedRect(rect, 30, 30, Qt::RelativeSize);
         QFont font = painter.font();
+        //TODO adjust font sizes
         if (i->getValue() < 10) {
             font.setPixelSize(tileSize * 0.9);
         } else if (i->getValue() < 100) {
             font.setPixelSize(tileSize * 0.67);
+        } else if (i->getValue() < 1000) {
+            font.setPixelSize(tileSize * 0.5);
+        } else {
+            font.setPixelSize(tileSize * 0.33);
         }
         pen2.setColor(i->getFontColor());
         painter.setPen(pen2);
