@@ -12,14 +12,26 @@ Grid::Grid(int size, int startTile) : size(size)
     }
 }
 
+Grid::~Grid()
+{
+    for (int r = 0; r < size; ++r) {
+        for (int c = 0; c < size; ++c) {
+            if (grid[r][c] != nullptr) {
+                delete grid[r][c];
+                grid[r][c] = nullptr;
+            }
+        }
+    }
+}
+
 bool Grid::insertRandomTile()
 {
-    auto avail = available();
+    QList<QPoint> avail = available();
     if (avail.size() == 0) {
         return false;
     }
     int v = QRandomGenerator::global()->bounded(0, avail.size());
-    Tile *t = new Tile(avail[v]);
+    Tile *t = new Tile(avail[v].x(), avail[v].y());
     grid[avail[v].x()][avail[v].y()] = t;
     return true;
 }
@@ -34,15 +46,87 @@ QList<const Tile *> Grid::tiles() const
     QList<const Tile *> t;
     for (int r = 0; r < size; ++r) {
         for (int c = 0; c < size; ++c) {
-            t.append(grid[r][c]);
+            if (grid[r][c] != nullptr) {
+                t.append(grid[r][c]);
+            }
         }
     }
     return t;
 }
 
+bool Grid::shift(direction dir)
+{
+    bool modified = false;
+    switch (dir) {
+    case shiftRight:
+        for (int r = 0; r < size; ++r) {
+            int limit = size - 1;
+            for (int c = size - 2; c >= 0; --c) {
+                if (grid[r][c] != nullptr) {
+                    int newCol = c + 1;
+                    while ((newCol < limit) && grid[r][newCol] == nullptr) {
+                        ++newCol;
+                    }
+                    if (grid[r][newCol] == nullptr) {
+                        grid[r][newCol] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[r][newCol]->move(r, newCol);
+                        modified = true;
+                    } else if(*grid[r][c] == *grid[r][newCol]) {
+                        grid[r][newCol]->merge(*grid[r][c]);
+                        delete grid[r][c];
+                        grid[r][c] = nullptr;
+                        limit = newCol - 1;
+                        modified = true;
+                    } else if (newCol - 1 > c){
+                        grid[r][newCol - 1] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[r][newCol - 1]->move(r, newCol - 1);
+                        modified = true;
+                    }
+                }
+            }
+        }
+        break;
+    case shiftLeft:
+        for (int r = 0; r < size; ++r) {
+            int limit = 0;
+            for (int c = 1; c < size; ++c) {
+                if (grid[r][c] != nullptr) {
+                    int newCol = c - 1;
+                    while ((newCol > limit) && grid[r][newCol] == nullptr) {
+                        --newCol;
+                    }
+                    if (grid[r][newCol] == nullptr) {
+                        grid[r][newCol] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[r][newCol]->move(r, newCol);
+                        modified = true;
+                    } else if(*grid[r][c] == *grid[r][newCol]) {
+                        grid[r][newCol]->merge(*grid[r][c]);
+                        delete grid[r][c];
+                        grid[r][c] = nullptr;
+                        limit = newCol + 1;
+                        modified = true;
+                    } else if (newCol + 1 < c){
+                        grid[r][newCol + 1] = grid[r][c];
+                        grid[r][c] = nullptr;
+                        grid[r][newCol + 1]->move(r, newCol + 1);
+                        modified = true;
+                    }
+                }
+            }
+        }
+        break;
+    }
+
+    return modified;
+}
+
 QList<QPoint> Grid::available() const
 {
     QList<QPoint> spaces;
+    spaces.empty();
     for (int r = 0; r < size; ++r) {
         for (int c = 0; c < size; ++c) {
             if (grid[r][c] == nullptr) {

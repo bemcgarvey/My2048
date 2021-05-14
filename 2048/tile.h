@@ -2,21 +2,26 @@
 #define TILE_H
 
 #include <QColor>
-#include <QPoint>
 
 class Tile
 {
 public:
-    Tile(QPoint pos);
+    Tile(int r, int c);
     bool merge(const Tile &t);
     int getValue() const {return value;}
-    QPoint getPosition() const {return pos;}
-    QColor getColor();
-    void move(QPoint newPos) {pos = newPos;}
+    int getRow() const {return row;}
+    int getCol() const {return col;}
+    QColor getColor() const;
+    QColor getFontColor() const;
+    void move(int newRow, int newCol) {row = newRow; col = newCol;}
+    bool operator==(const Tile &rhs) const;
 private:
     int value;
-    QPoint pos;
-    static QVector<QColor> colorList_;
+    int level;
+    int row;
+    int col;
+    static QVector<QColor> colorList;
+    static QVector<QColor> fontColors;
 };
 
 #endif // TILE_H

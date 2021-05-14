@@ -6,13 +6,18 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    grid = new Grid();
-    update();
+    ui->gridFrame->setGrid(new Grid);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete grid;
+}
+
+
+void MainWindow::on_actionRestart_triggered()
+{
+    ui->gridFrame->setGrid(new Grid);
+    update();
 }
 

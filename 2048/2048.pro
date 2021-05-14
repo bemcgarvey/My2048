@@ -10,12 +10,14 @@ CONFIG += c++11
 
 SOURCES += \
     grid.cpp \
+    gridframe.cpp \
     main.cpp \
     mainwindow.cpp \
     tile.cpp
 
 HEADERS += \
     grid.h \
+    gridframe.h \
     mainwindow.h \
     tile.h
 

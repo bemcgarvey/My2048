@@ -1,14 +1,15 @@
 #include "tile.h"
 #include <QRandomGenerator>
 
-Tile::Tile(QPoint pos)
+Tile::Tile(int r, int c) : row(r), col(c)
 {
-    this->pos = pos;
-    int v = QRandomGenerator::global()->bounded(0, 9);
+    int v = QRandomGenerator::global()->bounded(0, 10);
     if (v == 9) {
         value = 4;
+        level = 1;
     } else {
         value = 2;
+        level = 0;
     }
 }
 
@@ -18,22 +19,32 @@ bool Tile::merge(const Tile &t)
         return false;
     }
     value += t.value;
+    ++level;
     return true;
 }
 
-QColor Tile::getColor()
+QColor Tile::getColor() const
 {
-    int p = 0;
-    int v = value;
-    while (v > 2) {
-        v /= 2;
-        ++p;
-    }
-    if (p >= colorList_.size()) {
+    if (level >= colorList.size()) {
         return Qt::white;
     } else {
-        return colorList_[p];
+        return colorList[level];
     }
 }
 
-QVector<QColor> Tile::colorList_ = {Qt::white, Qt::yellow, Qt::green, Qt::blue, Qt::red, Qt::lightGray};
+QColor Tile::getFontColor() const
+{
+    if (level >= fontColors.size()) {
+        return Qt::black;
+    } else {
+        return fontColors[level];
+    }
+}
+
+bool Tile::operator==(const Tile &rhs) const
+{
+    return value == rhs.value;
+}
+
+QVector<QColor> Tile::colorList = {Qt::yellow, Qt::magenta, Qt::green, Qt::blue, Qt::red, Qt::lightGray};
+QVector<QColor> Tile::fontColors = {Qt::blue, Qt::yellow, Qt::white, Qt::blue, Qt::red, Qt::lightGray};
