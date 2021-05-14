@@ -11,20 +11,20 @@ public:
     GridFrame(QWidget *parent);
     ~GridFrame();
     void setGrid(Grid *grid);
+signals:
+    void scoreUpdate(int score, int moves, int largestTile);
+    void lostGame();
 protected:
     virtual void paintEvent(QPaintEvent *event) override;
     virtual QSize sizeHint() const override;
     virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 private:
     Grid *grid;
     int leftBorder;
     const int borderWidth = 4;
     int gridSize;
     int tileSize;
-
-    // QWidget interface
-protected:
-    virtual void keyPressEvent(QKeyEvent *event) override;
 };
 
 #endif // GRIDFRAME_H

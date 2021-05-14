@@ -10,15 +10,20 @@ public:
     Grid(int size = 4, int startTile = 2);
     ~Grid();
     enum direction {shiftRight, shiftLeft, shiftUp, shiftDown};
-    bool insertRandomTile();
     bool hasAvailable() const;
     QList<const Tile *> tiles() const;
     bool shift(direction dir);
     int getSize() const {return size;}
+    void getStats(int &score, int &moves, int &largestTile);
 private:
+    bool insertRandomTile();
     QVector<QVector<Tile *>> grid;
     QList<QPoint> available() const;
     int size;
+    int score;
+    int largestTile;
+    int moves;
+    int emptySpaces;
 };
 
 #endif // GRID_H

@@ -2,7 +2,8 @@
 #include <QRandomGenerator>
 #include <QDebug>
 
-Grid::Grid(int size, int startTile) : size(size)
+Grid::Grid(int size, int startTile) : size(size), score(0)
+  , largestTile(0), moves(0), emptySpaces(size * size)
 {
     for (int i = 0; i < size; ++i) {
         grid.append(QVector<Tile *>(size, nullptr));
@@ -28,17 +29,19 @@ bool Grid::insertRandomTile()
 {
     QList<QPoint> avail = available();
     if (avail.size() == 0) {
+        emptySpaces = 0;
         return false;
     }
     int v = QRandomGenerator::global()->bounded(0, avail.size());
     Tile *t = new Tile(avail[v].x(), avail[v].y());
     grid[avail[v].x()][avail[v].y()] = t;
+    emptySpaces = avail.size() - 1;
     return true;
 }
 
 bool Grid::hasAvailable() const
 {
-    return available().size() > 0;
+    return emptySpaces != 0;
 }
 
 QList<const Tile *> Grid::tiles() const
@@ -73,7 +76,7 @@ bool Grid::shift(direction dir)
                         grid[r][newCol]->move(r, newCol);
                         modified = true;
                     } else if(*grid[r][c] == *grid[r][newCol]) {
-                        grid[r][newCol]->merge(*grid[r][c]);
+                        score += grid[r][newCol]->merge(*grid[r][c]);
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newCol - 1;
@@ -103,7 +106,7 @@ bool Grid::shift(direction dir)
                         grid[r][newCol]->move(r, newCol);
                         modified = true;
                     } else if(*grid[r][c] == *grid[r][newCol]) {
-                        grid[r][newCol]->merge(*grid[r][c]);
+                        score += grid[r][newCol]->merge(*grid[r][c]);
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newCol + 1;
@@ -133,7 +136,7 @@ bool Grid::shift(direction dir)
                         grid[newRow][c]->move(newRow, c);
                         modified = true;
                     } else if(*grid[r][c] == *grid[newRow][c]) {
-                        grid[newRow][c]->merge(*grid[r][c]);
+                        score += grid[newRow][c]->merge(*grid[r][c]);
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newRow - 1;
@@ -163,7 +166,7 @@ bool Grid::shift(direction dir)
                         grid[newRow][c]->move(newRow, c);
                         modified = true;
                     } else if(*grid[r][c] == *grid[newRow][c]) {
-                        grid[newRow][c]->merge(*grid[r][c]);
+                        score += grid[newRow][c]->merge(*grid[r][c]);
                         delete grid[r][c];
                         grid[r][c] = nullptr;
                         limit = newRow + 1;
@@ -179,7 +182,18 @@ bool Grid::shift(direction dir)
         }
         break;
     }
+    if (modified) {
+        ++moves;
+        insertRandomTile();
+    }
     return modified;
+}
+
+void Grid::getStats(int &score, int &moves, int &largestTile)
+{
+    score = this->score;
+    moves = this->moves;
+    largestTile = this->largestTile;
 }
 
 QList<QPoint> Grid::available() const

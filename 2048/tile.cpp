@@ -13,14 +13,14 @@ Tile::Tile(int r, int c) : row(r), col(c)
     }
 }
 
-bool Tile::merge(const Tile &t)
+int Tile::merge(const Tile &t)
 {
     if (t.value != value) {
         return false;
     }
     value += t.value;
     ++level;
-    return true;
+    return value;
 }
 
 QColor Tile::getColor() const

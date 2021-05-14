@@ -7,7 +7,7 @@ class Tile
 {
 public:
     Tile(int r, int c);
-    bool merge(const Tile &t);
+    int merge(const Tile &t);
     int getValue() const {return value;}
     int getRow() const {return row;}
     int getCol() const {return col;}

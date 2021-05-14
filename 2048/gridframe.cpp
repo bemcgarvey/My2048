@@ -4,6 +4,7 @@
 #include <QDebug>
 
 //TODO add swipe using QTouchEvents?
+//TODO detect win (2048) and loss
 
 GridFrame::GridFrame(QWidget *parent) : QFrame(parent), grid(nullptr)
 {
@@ -110,8 +111,12 @@ void GridFrame::keyPressEvent(QKeyEvent *event)
         success = grid->shift(Grid::shiftDown);
     }
     if (success) {
-        grid->insertRandomTile();
         update();
     }
+    int score;
+    int moves;
+    int largestTile;
+    grid->getStats(score, moves, largestTile);
+    emit scoreUpdate(score, moves, largestTile);
     event->accept();
 }
