@@ -1,6 +1,7 @@
 #include "grid.h"
 #include <QRandomGenerator>
 #include <QDebug>
+#include <QDataStream>
 #include "gridsnapshot.h"
 
 Grid::Grid(int size, int startTile) : size(size), score(0)
@@ -250,6 +251,9 @@ bool Grid::undo()
     emptySpaces = u.emptySpaces;
     for (int r = 0; r < size; ++r) {
         for (int c = 0; c < size; ++c) {
+            if (grid[r][c] != nullptr) {
+                delete grid[r][c];
+            }
             grid[r][c] = nullptr;
         }
     }
@@ -273,4 +277,39 @@ QList<QPoint> Grid::available() const
         }
     }
     return spaces;
+}
+
+QDataStream& operator<<(QDataStream &stream, const Grid &g) {
+    stream << g.size << g.score << g.moves << g.largestTile << g.undoDepth;
+    stream << ((g.size * g.size) - g.emptySpaces);
+    for (int r = 0; r < g.size; ++r) {
+        for (int c = 0; c < g.size; ++c) {
+            if (g.grid[r][c] != nullptr) {
+                stream << *(g.grid[r][c]);
+            }
+        }
+    }
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream &stream, Grid &g) {
+    stream >> g.size >> g.score >> g.moves >> g.largestTile >> g.undoDepth;
+    int numTiles;
+    stream >> numTiles;
+    for (int r = 0; r < g.size; ++r) {
+        for (int c = 0; c < g.size; ++c) {
+            if (g.grid[r][c] != nullptr) {
+                delete g.grid[r][c];
+            }
+            g.grid[r][c] = nullptr;
+        }
+    }
+    for (int i = 0; i < numTiles; ++i) {
+        Tile *t;
+        t = new Tile(0, 0);
+        stream >> *t;
+        g.grid[t->getRow()][t->getCol()] = t;
+    }
+    g.undoStack.clear();
+    return stream;
 }

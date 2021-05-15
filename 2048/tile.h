@@ -15,6 +15,8 @@ public:
     QColor getFontColor() const;
     void move(int newRow, int newCol) {row = newRow; col = newCol;}
     bool operator==(const Tile &rhs) const;
+    friend QDataStream& operator<<(QDataStream &stream, const Tile &t);
+    friend QDataStream& operator>>(QDataStream &stream, Tile &t);
 private:
     int value;
     int level;

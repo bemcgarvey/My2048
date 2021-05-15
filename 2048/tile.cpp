@@ -1,4 +1,5 @@
 #include "tile.h"
+#include <QDataStream>
 #include <QRandomGenerator>
 
 Tile::Tile(int r, int c) : row(r), col(c)
@@ -46,6 +47,15 @@ bool Tile::operator==(const Tile &rhs) const
     return value == rhs.value;
 }
 
+QDataStream& operator<<(QDataStream &stream, const Tile &t) {
+    stream << t.value << t.level << t.row << t.col;
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream &stream, Tile &t) {
+    stream >> t.value >> t.level >> t.row >> t.col;
+    return stream;
+}
 
 //TODO select a good set of colors
 QVector<QColor> Tile::colorList = {Qt::yellow, Qt::magenta, Qt::green, Qt::blue, Qt::red, Qt::darkYellow, QColor(128, 128, 128), QColor(36, 250, 198)};

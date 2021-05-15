@@ -28,6 +28,10 @@ private slots:
     void onClearScores();
     void on_actionUndo_triggered();
 
+    void on_actionSave_triggered();
+
+    void on_actionOpen_triggered();
+
 private:
     Ui::MainWindow *ui;
     QLabel *scoreLabel;

@@ -12,6 +12,8 @@ public:
     ~GridFrame();
     void setGrid(Grid *grid);
     void undo();
+    void saveGrid(QDataStream &out);
+    void loadGrid(QDataStream &in);
 signals:
     void scoreUpdate(int score, int moves, int largestTile);
     void lostGame();
@@ -21,7 +23,7 @@ protected:
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void keyPressEvent(QKeyEvent *event) override;
 private:
-    Grid *grid;
+    Grid *grid;  //TODO use smart pointer
     int leftBorder;
     const int borderWidth = 4;
     int gridSize;

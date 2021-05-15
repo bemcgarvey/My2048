@@ -21,8 +21,11 @@ public:
     void getStats(int &score, int &moves, int &largestTile) const;
     friend class GridSnapshot;
     bool undo();
+    friend QDataStream& operator<<(QDataStream &stream, const Grid &g);
+    friend QDataStream& operator>>(QDataStream &stream, Grid &g);
 private:
     bool insertRandomTile();
+    //TODO use unique_ptr<Tile> instead of Tile *
     QVector<QVector<Tile *>> grid;
     QList<QPoint> available() const;
     int size;

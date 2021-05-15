@@ -1,12 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFile>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
 #include "aboutdialog.h"
 #include "highscoredialog.h"
 #include "optionsdialog.h"
+#include <QDebug>
 
-//TODO implement save and load
 //TODO remove any qDebugs
 
 MainWindow::MainWindow(QWidget *parent)
@@ -145,5 +147,31 @@ void MainWindow::on_actionHigh_Score_triggered()
 void MainWindow::on_actionUndo_triggered()
 {
     ui->gridFrame->undo();
+}
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save game", "", "2048 Games (*.2048)");
+    if (fileName.length() > 0) {
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly);
+        QDataStream out(&file);
+        ui->gridFrame->saveGrid(out);
+        file.close();
+    }
+}
+
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Opeen game", "", "2048 Games (*.2048)");
+    if (fileName.length() > 0) {
+        QFile file(fileName);
+        file.open(QIODevice::ReadOnly);
+        QDataStream in(&file);
+        ui->gridFrame->loadGrid(in);
+        file.close();
+    }
 }
 

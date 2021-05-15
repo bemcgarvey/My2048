@@ -36,6 +36,22 @@ void GridFrame::undo()
     }
 }
 
+void GridFrame::saveGrid(QDataStream &out)
+{
+    out << *grid;
+}
+
+void GridFrame::loadGrid(QDataStream &in)
+{
+    in >> *grid;
+    int score;
+    int moves;
+    int largestTile;
+    grid->getStats(score, moves, largestTile);
+    emit scoreUpdate(score, moves, largestTile);
+    update();
+}
+
 
 void GridFrame::paintEvent(QPaintEvent *event)
 {
