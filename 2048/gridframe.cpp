@@ -12,16 +12,11 @@ GridFrame::GridFrame(QWidget *parent) : QFrame(parent), grid(nullptr)
 
 GridFrame::~GridFrame()
 {
-    delete grid;
 }
 
-void GridFrame::setGrid(Grid *grid)
+void GridFrame::setGrid(Grid *g)
 {
-    if (this->grid != nullptr) {
-        delete this->grid;
-        this->grid = nullptr;
-    }
-    this->grid = grid;
+    grid = std::unique_ptr<Grid>(g);
 }
 
 void GridFrame::undo()

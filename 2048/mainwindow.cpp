@@ -165,7 +165,7 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Opeen game", "", "2048 Games (*.2048)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Open game", "", "2048 Games (*.2048)");
     if (fileName.length() > 0) {
         QFile file(fileName);
         file.open(QIODevice::ReadOnly);
