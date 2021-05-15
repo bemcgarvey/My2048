@@ -53,7 +53,6 @@ void GridFrame::paintEvent(QPaintEvent *event)
                    , borderWidth + 1 + r * (borderWidth + tileSize), tileSize - 2, tileSize - 2);
         painter.drawRoundedRect(rect, 30, 30, Qt::RelativeSize);
         QFont font = painter.font();
-        //TODO adjust font sizes
         if (i->getValue() < 10) {
             font.setPixelSize(tileSize * 0.9);
         } else if (i->getValue() < 100) {
@@ -61,7 +60,7 @@ void GridFrame::paintEvent(QPaintEvent *event)
         } else if (i->getValue() < 1000) {
             font.setPixelSize(tileSize * 0.5);
         } else {
-            font.setPixelSize(tileSize * 0.33);
+            font.setPixelSize(tileSize * 0.4);
         }
         pen2.setColor(i->getFontColor());
         painter.setPen(pen2);

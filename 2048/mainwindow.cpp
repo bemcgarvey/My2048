@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include "aboutdialog.h"
+#include "highscoredialog.h"
 #include "optionsdialog.h"
 
 //TODO implement undo
@@ -70,6 +71,16 @@ void MainWindow::onLostGame()
     }
 }
 
+void MainWindow::onClearScores()
+{
+    QSettings settings;
+    settings.clear();
+    highScore = 0;
+    mostMoves = 0;
+    largestTile = 2;
+    closeEvent(nullptr);
+}
+
 
 void MainWindow::on_actionRestart_triggered()
 {
@@ -118,6 +129,16 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionOptions_triggered()
 {
     OptionsDialog *dlg = new OptionsDialog(this);
+    dlg->exec();
+    delete dlg;
+}
+
+
+void MainWindow::on_actionHigh_Score_triggered()
+{
+    HighScoreDialog *dlg = new HighScoreDialog(this);
+    dlg->setScores(highScore, mostMoves, largestTile);
+    connect(dlg, &HighScoreDialog::clearScores, this, &MainWindow::onClearScores);
     dlg->exec();
     delete dlg;
 }

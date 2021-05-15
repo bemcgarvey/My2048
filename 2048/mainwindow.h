@@ -16,15 +16,16 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-public slots:
-    void onScoreUpdate(int score, int moves, int largestTile);
-    void onLostGame();
+
 private slots:
     void on_actionRestart_triggered();
     void on_actionExit_triggered();
     void on_actionAbout_triggered();
-
     void on_actionOptions_triggered();
+    void on_actionHigh_Score_triggered();
+    void onScoreUpdate(int score, int moves, int largestTile);
+    void onLostGame();
+    void onClearScores();
 
 private:
     Ui::MainWindow *ui;
