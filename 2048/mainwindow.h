@@ -26,10 +26,10 @@ private slots:
     void onScoreUpdate(int score, int moves, int largestTile);
     void onLostGame();
     void onClearScores();
+    void on_actionUndo_triggered();
 
 private:
     Ui::MainWindow *ui;
-    Grid *grid;
     QLabel *scoreLabel;
     QLabel *movesLabel;
     int winningTile;

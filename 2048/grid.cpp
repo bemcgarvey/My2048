@@ -1,9 +1,10 @@
 #include "grid.h"
 #include <QRandomGenerator>
 #include <QDebug>
+#include "gridsnapshot.h"
 
 Grid::Grid(int size, int startTile) : size(size), score(0)
-  , largestTile(2), moves(0), emptySpaces(size * size)
+  , largestTile(2), moves(0), emptySpaces(size * size), undoDepth(10)
 {
     for (int i = 0; i < size; ++i) {
         grid.append(QVector<Tile *>(size, nullptr));
@@ -77,6 +78,7 @@ QList<const Tile *> Grid::tiles() const
 bool Grid::shift(direction dir)
 {
     bool modified = false;
+    GridSnapshot snap(this);
     switch (dir) {
     case shiftRight:
         for (int r = 0; r < size; ++r) {
@@ -218,15 +220,45 @@ bool Grid::shift(direction dir)
     if (modified) {
         ++moves;
         insertRandomTile();
+        if (undoStack.size() < undoDepth) {
+            undoStack.push_front(snap);
+        } else {
+            undoStack.pop_back();
+            undoStack.push_front(snap);
+        }
     }
     return modified;
 }
 
-void Grid::getStats(int &score, int &moves, int &largestTile)
+void Grid::getStats(int &score, int &moves, int &largestTile) const
 {
     score = this->score;
     moves = this->moves;
     largestTile = this->largestTile;
+}
+
+bool Grid::undo()
+{
+    if (undoStack.empty()) {
+        return false;
+    }
+    GridSnapshot &u = undoStack.front();
+    size = u.size;
+    score = u.score;
+    moves = u.moves;
+    largestTile = u.largestTile;
+    emptySpaces = u.emptySpaces;
+    for (int r = 0; r < size; ++r) {
+        for (int c = 0; c < size; ++c) {
+            grid[r][c] = nullptr;
+        }
+    }
+    for (auto &&i : u.tiles) {
+        Tile *t = new Tile(i);
+        grid[t->getRow()][t->getCol()] = t;
+    }
+    undoStack.pop_front();
+    return true;
 }
 
 QList<QPoint> Grid::available() const

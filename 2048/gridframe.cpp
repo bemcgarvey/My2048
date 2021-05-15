@@ -24,6 +24,18 @@ void GridFrame::setGrid(Grid *grid)
     this->grid = grid;
 }
 
+void GridFrame::undo()
+{
+    if (grid->undo()) {
+        int score;
+        int moves;
+        int largestTile;
+        grid->getStats(score, moves, largestTile);
+        emit scoreUpdate(score, moves, largestTile);
+        update();
+    }
+}
+
 
 void GridFrame::paintEvent(QPaintEvent *event)
 {

@@ -11,6 +11,7 @@ public:
     GridFrame(QWidget *parent);
     ~GridFrame();
     void setGrid(Grid *grid);
+    void undo();
 signals:
     void scoreUpdate(int score, int moves, int largestTile);
     void lostGame();

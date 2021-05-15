@@ -12,6 +12,7 @@ SOURCES += \
     aboutdialog.cpp \
     grid.cpp \
     gridframe.cpp \
+    gridsnapshot.cpp \
     highscoredialog.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,6 +23,7 @@ HEADERS += \
     aboutdialog.h \
     grid.h \
     gridframe.h \
+    gridsnapshot.h \
     highscoredialog.h \
     mainwindow.h \
     optionsdialog.h \

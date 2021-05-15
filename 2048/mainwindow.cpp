@@ -6,10 +6,8 @@
 #include "highscoredialog.h"
 #include "optionsdialog.h"
 
-//TODO implement undo
 //TODO implement save and load
 //TODO remove any qDebugs
-//TODO options - size, start tiles, undo depth, background color, winning tile
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -141,5 +139,11 @@ void MainWindow::on_actionHigh_Score_triggered()
     connect(dlg, &HighScoreDialog::clearScores, this, &MainWindow::onClearScores);
     dlg->exec();
     delete dlg;
+}
+
+
+void MainWindow::on_actionUndo_triggered()
+{
+    ui->gridFrame->undo();
 }
 
