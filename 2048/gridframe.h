@@ -23,12 +23,14 @@ protected:
     virtual QSize sizeHint() const override;
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual bool event(QEvent *event) override;
 private:
     std::unique_ptr<Grid> grid;
     int leftBorder;
     const int borderWidth = 4;
     int gridSize;
     int tileSize;
+    void shiftGrid(Grid::Direction dir);
 };
 
 #endif // GRIDFRAME_H

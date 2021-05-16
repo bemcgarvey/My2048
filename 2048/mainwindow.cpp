@@ -7,10 +7,7 @@
 #include "aboutdialog.h"
 #include "highscoredialog.h"
 #include "optionsdialog.h"
-#include <QDebug>
 #include <memory>
-
-//TODO remove any qDebugs
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

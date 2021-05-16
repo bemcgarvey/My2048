@@ -1,6 +1,5 @@
 #include "grid.h"
 #include <QRandomGenerator>
-#include <QDebug>
 #include <QDataStream>
 #include "gridsnapshot.h"
 
@@ -68,7 +67,7 @@ QList<const Tile *> Grid::tiles() const
     return t;
 }
 
-bool Grid::shift(direction dir)
+bool Grid::shift(Direction dir)
 {
     bool modified = false;
     GridSnapshot snap(this);

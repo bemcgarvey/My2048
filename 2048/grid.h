@@ -17,10 +17,10 @@ class Grid
 public:
     Grid(int size = 4, int startTile = 2);
     ~Grid();
-    enum direction {shiftRight, shiftLeft, shiftUp, shiftDown};
+    enum Direction {shiftRight, shiftLeft, shiftUp, shiftDown};
     bool isLost() const;
     QList<const Tile *> tiles() const;
-    bool shift(direction dir);
+    bool shift(Direction dir);
     int getSize() const {return size;}
     void getStats(int &score, int &moves, int &largestTile) const;
     friend class GridSnapshot;

@@ -1,13 +1,11 @@
 #include "gridframe.h"
 #include <QPainter>
 #include <QResizeEvent>
-#include <QDebug>
-
-//TODO add swipe using QTouchEvents?
 
 GridFrame::GridFrame(QWidget *parent) : QFrame(parent), grid(nullptr)
 {
     grabKeyboard();
+    setAttribute(Qt::WA_AcceptTouchEvents);
 }
 
 GridFrame::~GridFrame()
@@ -121,16 +119,58 @@ void GridFrame::resizeEvent(QResizeEvent *event)
 
 void GridFrame::keyPressEvent(QKeyEvent *event)
 {
-    bool success = false;
     if (event->key() == Qt::Key_Left) {
-        success = grid->shift(Grid::shiftLeft);
+        shiftGrid(Grid::shiftLeft);
     } else if (event->key() == Qt::Key_Right) {
-        success = grid->shift(Grid::shiftRight);
+        shiftGrid(Grid::shiftRight);
     } else if (event->key() == Qt::Key_Up) {
-        success = grid->shift(Grid::shiftUp);
+        shiftGrid(Grid::shiftUp);
     } else if (event->key() == Qt::Key_Down) {
-        success = grid->shift(Grid::shiftDown);
+        shiftGrid(Grid::shiftDown);
     }
+    event->accept();
+}
+
+
+bool GridFrame::event(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::TouchBegin:
+    case QEvent::TouchUpdate:
+        break;
+    case QEvent::TouchEnd:
+    {
+        QTouchEvent *te = static_cast<QTouchEvent *>(event);
+        QList<QTouchEvent::TouchPoint> touchPoints = te->touchPoints();
+        if (touchPoints.size() == 1) {
+            const QTouchEvent::TouchPoint& tp = touchPoints[0];
+            int x = tp.lastPos().x() - tp.startPos().x();
+            int y = tp.lastPos().y() - tp.startPos().y();
+            if (abs(x) > abs(y)) {
+                if (x > 0) {
+                    shiftGrid(Grid::shiftRight);
+                } else {
+                    shiftGrid(Grid::shiftLeft);
+                }
+            } else {
+                if (y > 0) {
+                    shiftGrid(Grid::shiftDown);
+                } else {
+                    shiftGrid(Grid::shiftUp);
+                }
+            }
+        }
+        break;
+    }
+    default:
+        return QFrame::event(event);
+    }
+    return true;
+}
+
+void GridFrame::shiftGrid(Grid::Direction dir)
+{
+    bool success = grid->shift(dir);
     if (success) {
         update();
     }
@@ -142,5 +182,4 @@ void GridFrame::keyPressEvent(QKeyEvent *event)
     if (grid->isLost()) {
         emit lostGame();
     }
-    event->accept();
 }
