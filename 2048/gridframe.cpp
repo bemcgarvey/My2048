@@ -15,6 +15,8 @@ GridFrame::~GridFrame()
 void GridFrame::setGrid(Grid *g)
 {
     grid = std::unique_ptr<Grid>(g);
+    calculateSizes(width(), height());
+    update();
 }
 
 void GridFrame::undo()
@@ -34,15 +36,16 @@ void GridFrame::saveGrid(QDataStream &out)
     out << *grid;
 }
 
-void GridFrame::loadGrid(QDataStream &in)
+void GridFrame::loadGrid(int size, QDataStream &in)
 {
+    setGrid(new Grid(size));
     in >> *grid;
     int score;
     int moves;
     int largestTile;
     grid->getStats(score, moves, largestTile);
     emit scoreUpdate(score, moves, largestTile);
-    update();
+    calculateSizes(width(), height());
 }
 
 
@@ -99,20 +102,7 @@ QSize GridFrame::sizeHint() const
 
 void GridFrame::resizeEvent(QResizeEvent *event)
 {
-    if (!grid) {
-        return;
-    }
-    if (event->size().width() > event->size().height()) {
-        gridSize = event->size().height();
-    } else {
-        gridSize = event->size().width();
-    }
-    int borders = borderWidth * (grid->getSize() + 1);
-    int extra = (gridSize - borders) % grid->getSize();
-    gridSize -= extra;
-    leftBorder = (event->size().width() - gridSize) / 2;
-    tileSize = gridSize - (borderWidth * (grid->getSize() + 1));
-    tileSize /= grid->getSize();
+    calculateSizes(event->size().width(), event->size().height());
 }
 
 
@@ -182,4 +172,22 @@ void GridFrame::shiftGrid(Grid::Direction dir)
     if (grid->isLost()) {
         emit lostGame();
     }
+}
+
+void GridFrame::calculateSizes(int w, int h)
+{
+    if (!grid) {
+        return;
+    }
+    if (w > h) {
+        gridSize = h;
+    } else {
+        gridSize = w;
+    }
+    int borders = borderWidth * (grid->getSize() + 1);
+    int extra = (gridSize - borders) % grid->getSize();
+    gridSize -= extra;
+    leftBorder = (w - gridSize) / 2;
+    tileSize = gridSize - (borderWidth * (grid->getSize() + 1));
+    tileSize /= grid->getSize();
 }

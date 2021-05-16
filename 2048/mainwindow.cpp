@@ -12,14 +12,18 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), winningTile(2048), hasBeenWon(false)
-    , highScore(0), mostMoves(0), largestTile(2)
+    , highScore(0), mostMoves(0), largestTile(2), currentGridSize(4)
+    , currentStartTiles(2)
 {
     QSettings settings;
     highScore = settings.value("High Score", 0).toInt();
     mostMoves = settings.value("Most Moves", 0).toInt();
     largestTile = settings.value("Largest Tile", 2).toInt();
+    winningTile = settings.value("Winning Tile", 2048).toInt();
+    currentGridSize = settings.value("Grid Size", 4).toInt();
+    currentStartTiles = settings.value("Start Tiles", 2).toInt();
     ui->setupUi(this);
-    ui->gridFrame->setGrid(new Grid);
+    ui->gridFrame->setGrid(new Grid(currentGridSize, currentStartTiles));
     connect(ui->gridFrame, &GridFrame::scoreUpdate, this, &MainWindow::onScoreUpdate);
     connect(ui->gridFrame, &GridFrame::lostGame, this, &MainWindow::onLostGame);
     scoreLabel = new QLabel("0");
@@ -99,10 +103,9 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::restartGame()
 {
-    ui->gridFrame->setGrid(new Grid);
+    ui->gridFrame->setGrid(new Grid(currentGridSize, currentStartTiles));
     onScoreUpdate(0, 0, 0);
     hasBeenWon = false;
-    update();
 }
 
 
@@ -114,6 +117,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     settings.setValue("High Score", highScore);
     settings.setValue("Most Moves", mostMoves);
     settings.setValue("Largest Tile", largestTile);
+    settings.setValue("Winning Tile", winningTile);
+    settings.setValue("Grid Size", currentGridSize);
+    settings.setValue("Start Tiles", currentStartTiles);
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -126,7 +132,23 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionOptions_triggered()
 {
     std::unique_ptr<OptionsDialog> dlg(new OptionsDialog(this));
-    dlg->exec();
+    dlg->setOptions(currentGridSize, currentStartTiles, winningTile);
+    if (dlg->exec() == QDialog::Accepted) {
+        int newGridSize;
+        int newStartTiles;
+        int newWinningTile;
+        dlg->getOptions(newGridSize, newStartTiles, newWinningTile);
+        if (newGridSize != currentGridSize || newStartTiles != currentStartTiles || newWinningTile != winningTile) {
+            if (QMessageBox::question(this, QApplication::applicationName()
+                    , "Discard current game and start a new game with these options?")
+                    == QMessageBox::Yes) {
+                currentGridSize = newGridSize;
+                currentStartTiles = newStartTiles;
+                winningTile = newWinningTile;
+                restartGame();
+            }
+        }
+    }
 }
 
 
@@ -152,6 +174,7 @@ void MainWindow::on_actionSave_triggered()
         QFile file(fileName);
         file.open(QIODevice::WriteOnly);
         QDataStream out(&file);
+        out << currentGridSize << currentStartTiles << winningTile;
         ui->gridFrame->saveGrid(out);
         file.close();
     }
@@ -165,7 +188,8 @@ void MainWindow::on_actionOpen_triggered()
         QFile file(fileName);
         file.open(QIODevice::ReadOnly);
         QDataStream in(&file);
-        ui->gridFrame->loadGrid(in);
+        in >> currentGridSize >> currentStartTiles >> winningTile;
+        ui->gridFrame->loadGrid(currentGridSize, in);
         file.close();
     }
 }

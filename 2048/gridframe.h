@@ -14,7 +14,7 @@ public:
     void setGrid(Grid *grid);
     void undo();
     void saveGrid(QDataStream &out);
-    void loadGrid(QDataStream &in);
+    void loadGrid(int size, QDataStream &in);
 signals:
     void scoreUpdate(int score, int moves, int largestTile);
     void lostGame();
@@ -31,6 +31,7 @@ private:
     int gridSize;
     int tileSize;
     void shiftGrid(Grid::Direction dir);
+    void calculateSizes(int w, int h);
 };
 
 #endif // GRIDFRAME_H

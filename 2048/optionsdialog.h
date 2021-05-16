@@ -14,12 +14,8 @@ class OptionsDialog : public QDialog
 public:
     explicit OptionsDialog(QWidget *parent = nullptr);
     ~OptionsDialog();
-
-private slots:
-    void on_buttonBox_accepted();
-
-    void on_buttonBox_rejected();
-
+    void setOptions(int size, int startTiles, int winningTile);
+    void getOptions(int &size, int &startTiles, int &winningTile) const;
 private:
     Ui::OptionsDialog *ui;
 };

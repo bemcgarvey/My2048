@@ -27,9 +27,7 @@ private slots:
     void onLostGame();
     void onClearScores();
     void on_actionUndo_triggered();
-
     void on_actionSave_triggered();
-
     void on_actionOpen_triggered();
 
 private:
@@ -42,6 +40,8 @@ private:
     int highScore;
     int mostMoves;
     int largestTile;
+    int currentGridSize;
+    int currentStartTiles;
 protected:
     virtual void closeEvent(QCloseEvent *event) override;
 };

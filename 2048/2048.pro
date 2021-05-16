@@ -17,6 +17,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     optionsdialog.cpp \
+    powerof2spinbox.cpp \
     tile.cpp
 
 HEADERS += \
@@ -27,6 +28,7 @@ HEADERS += \
     highscoredialog.h \
     mainwindow.h \
     optionsdialog.h \
+    powerof2spinbox.h \
     tile.h
 
 FORMS += \
