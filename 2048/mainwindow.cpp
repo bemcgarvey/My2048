@@ -8,6 +8,7 @@
 #include "highscoredialog.h"
 #include "optionsdialog.h"
 #include <QDebug>
+#include <memory>
 
 //TODO remove any qDebugs
 
@@ -120,27 +121,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::on_actionAbout_triggered()
 {
-    AboutDialog *dlg = new AboutDialog(this);
+    std::unique_ptr<AboutDialog> dlg(new AboutDialog(this));
     dlg->exec();
-    delete dlg;
 }
 
 
 void MainWindow::on_actionOptions_triggered()
 {
-    OptionsDialog *dlg = new OptionsDialog(this);
+    std::unique_ptr<OptionsDialog> dlg(new OptionsDialog(this));
     dlg->exec();
-    delete dlg;
 }
 
 
 void MainWindow::on_actionHigh_Score_triggered()
 {
-    HighScoreDialog *dlg = new HighScoreDialog(this);
+    std::unique_ptr<HighScoreDialog> dlg(new HighScoreDialog(this));
     dlg->setScores(highScore, mostMoves, largestTile);
-    connect(dlg, &HighScoreDialog::clearScores, this, &MainWindow::onClearScores);
+    connect(dlg.get(), &HighScoreDialog::clearScores, this, &MainWindow::onClearScores);
     dlg->exec();
-    delete dlg;
 }
 
 

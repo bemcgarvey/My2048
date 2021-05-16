@@ -8,7 +8,7 @@ Grid::Grid(int size, int startTile) : size(size), score(0)
   , largestTile(2), moves(0), emptySpaces(size * size), undoDepth(10)
 {
     for (int i = 0; i < size; ++i) {
-        grid.append(QVector<Tile *>(size, nullptr));
+        grid.push_back(vector<tilePtr>(size));
     }
     for (int i = 0; i < startTile; ++i) {
         insertRandomTile();
@@ -17,14 +17,6 @@ Grid::Grid(int size, int startTile) : size(size), score(0)
 
 Grid::~Grid()
 {
-    for (int r = 0; r < size; ++r) {
-        for (int c = 0; c < size; ++c) {
-            if (grid[r][c] != nullptr) {
-                delete grid[r][c];
-                grid[r][c] = nullptr;
-            }
-        }
-    }
 }
 
 bool Grid::insertRandomTile()
@@ -36,7 +28,7 @@ bool Grid::insertRandomTile()
     }
     int v = QRandomGenerator::global()->bounded(0, avail.size());
     Tile *t = new Tile(avail[v].x(), avail[v].y());
-    grid[avail[v].x()][avail[v].y()] = t;
+    grid[avail[v].x()][avail[v].y()] = tilePtr(t);
     emptySpaces = avail.size() - 1;
     return true;
 }
@@ -69,7 +61,7 @@ QList<const Tile *> Grid::tiles() const
     for (int r = 0; r < size; ++r) {
         for (int c = 0; c < size; ++c) {
             if (grid[r][c] != nullptr) {
-                t.append(grid[r][c]);
+                t.append(grid[r][c].get());
             }
         }
     }
@@ -85,14 +77,13 @@ bool Grid::shift(direction dir)
         for (int r = 0; r < size; ++r) {
             int limit = size - 1;
             for (int c = size - 2; c >= 0; --c) {
-                if (grid[r][c] != nullptr) {
+                if (grid[r][c]) {
                     int newCol = c + 1;
-                    while ((newCol < limit) && grid[r][newCol] == nullptr) {
+                    while ((newCol < limit) && !grid[r][newCol]) {
                         ++newCol;
                     }
-                    if (grid[r][newCol] == nullptr) {
-                        grid[r][newCol] = grid[r][c];
-                        grid[r][c] = nullptr;
+                    if (!grid[r][newCol]) {
+                        grid[r][newCol].swap(grid[r][c]);
                         grid[r][newCol]->move(r, newCol);
                         modified = true;
                     } else if(*grid[r][c] == *grid[r][newCol]) {
@@ -101,13 +92,11 @@ bool Grid::shift(direction dir)
                         if (newTileValue > largestTile) {
                             largestTile = newTileValue;
                         }
-                        delete grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[r][c].reset();
                         limit = newCol - 1;
                         modified = true;
                     } else if (newCol - 1 > c){
-                        grid[r][newCol - 1] = grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[r][newCol - 1].swap(grid[r][c]);
                         grid[r][newCol - 1]->move(r, newCol - 1);
                         modified = true;
                     }
@@ -119,14 +108,13 @@ bool Grid::shift(direction dir)
         for (int r = 0; r < size; ++r) {
             int limit = 0;
             for (int c = 1; c < size; ++c) {
-                if (grid[r][c] != nullptr) {
+                if (grid[r][c]) {
                     int newCol = c - 1;
-                    while ((newCol > limit) && grid[r][newCol] == nullptr) {
+                    while ((newCol > limit) && !grid[r][newCol]) {
                         --newCol;
                     }
-                    if (grid[r][newCol] == nullptr) {
-                        grid[r][newCol] = grid[r][c];
-                        grid[r][c] = nullptr;
+                    if (!grid[r][newCol]) {
+                        grid[r][newCol].swap(grid[r][c]);
                         grid[r][newCol]->move(r, newCol);
                         modified = true;
                     } else if(*grid[r][c] == *grid[r][newCol]) {
@@ -135,13 +123,11 @@ bool Grid::shift(direction dir)
                         if (newTileValue > largestTile) {
                             largestTile = newTileValue;
                         }
-                        delete grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[r][c].reset();
                         limit = newCol + 1;
                         modified = true;
                     } else if (newCol + 1 < c){
-                        grid[r][newCol + 1] = grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[r][newCol + 1].swap(grid[r][c]);
                         grid[r][newCol + 1]->move(r, newCol + 1);
                         modified = true;
                     }
@@ -153,14 +139,13 @@ bool Grid::shift(direction dir)
         for (int c = 0; c < size; ++c) {
             int limit = size - 1;
             for (int r = size - 2; r >= 0; --r) {
-                if (grid[r][c] != nullptr) {
+                if (grid[r][c]) {
                     int newRow = r + 1;
-                    while ((newRow < limit) && grid[newRow][c] == nullptr) {
+                    while ((newRow < limit) && !grid[newRow][c]) {
                         ++newRow;
                     }
-                    if (grid[newRow][c] == nullptr) {
-                        grid[newRow][c] = grid[r][c];
-                        grid[r][c] = nullptr;
+                    if (!grid[newRow][c]) {
+                        grid[newRow][c].swap(grid[r][c]);
                         grid[newRow][c]->move(newRow, c);
                         modified = true;
                     } else if(*grid[r][c] == *grid[newRow][c]) {
@@ -169,13 +154,11 @@ bool Grid::shift(direction dir)
                         if (newTileValue > largestTile) {
                             largestTile = newTileValue;
                         }
-                        delete grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[r][c].reset();
                         limit = newRow - 1;
                         modified = true;
                     } else if (newRow - 1 > r){
-                        grid[newRow - 1][c] = grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[newRow - 1][c].swap(grid[r][c]);
                         grid[newRow - 1][c]->move(newRow - 1, c);
                         modified = true;
                     }
@@ -187,14 +170,13 @@ bool Grid::shift(direction dir)
         for (int c = 0; c < size; ++c) {
             int limit = 0;
             for (int r = 1; r < size; ++r) {
-                if (grid[r][c] != nullptr) {
+                if (grid[r][c]) {
                     int newRow = r - 1;
-                    while ((newRow > limit) && grid[newRow][c] == nullptr) {
+                    while ((newRow > limit) && !grid[newRow][c]) {
                         --newRow;
                     }
-                    if (grid[newRow][c] == nullptr) {
-                        grid[newRow][c] = grid[r][c];
-                        grid[r][c] = nullptr;
+                    if (!grid[newRow][c]) {
+                        grid[newRow][c].swap(grid[r][c]);
                         grid[newRow][c]->move(newRow, c);
                         modified = true;
                     } else if(*grid[r][c] == *grid[newRow][c]) {
@@ -203,13 +185,11 @@ bool Grid::shift(direction dir)
                         if (newTileValue > largestTile) {
                             largestTile = newTileValue;
                         }
-                        delete grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[r][c].reset();
                         limit = newRow + 1;
                         modified = true;
                     } else if (newRow + 1 < r){
-                        grid[newRow + 1][c] = grid[r][c];
-                        grid[r][c] = nullptr;
+                        grid[newRow + 1][c].swap(grid[r][c]);
                         grid[newRow + 1][c]->move(newRow + 1, c);
                         modified = true;
                     }
@@ -251,15 +231,12 @@ bool Grid::undo()
     emptySpaces = u.emptySpaces;
     for (int r = 0; r < size; ++r) {
         for (int c = 0; c < size; ++c) {
-            if (grid[r][c] != nullptr) {
-                delete grid[r][c];
-            }
-            grid[r][c] = nullptr;
+            grid[r][c].reset();
         }
     }
     for (auto &&i : u.tiles) {
         Tile *t = new Tile(i);
-        grid[t->getRow()][t->getCol()] = t;
+        grid[t->getRow()][t->getCol()] = tilePtr(t);
     }
     undoStack.pop_front();
     return true;
@@ -271,7 +248,7 @@ QList<QPoint> Grid::available() const
     spaces.empty();
     for (int r = 0; r < size; ++r) {
         for (int c = 0; c < size; ++c) {
-            if (grid[r][c] == nullptr) {
+            if (!grid[r][c]) {
                 spaces.append(QPoint(r, c));
             }
         }
@@ -284,7 +261,7 @@ QDataStream& operator<<(QDataStream &stream, const Grid &g) {
     stream << ((g.size * g.size) - g.emptySpaces);
     for (int r = 0; r < g.size; ++r) {
         for (int c = 0; c < g.size; ++c) {
-            if (g.grid[r][c] != nullptr) {
+            if (g.grid[r][c]) {
                 stream << *(g.grid[r][c]);
             }
         }
@@ -298,17 +275,14 @@ QDataStream& operator>>(QDataStream &stream, Grid &g) {
     stream >> numTiles;
     for (int r = 0; r < g.size; ++r) {
         for (int c = 0; c < g.size; ++c) {
-            if (g.grid[r][c] != nullptr) {
-                delete g.grid[r][c];
-            }
-            g.grid[r][c] = nullptr;
+            g.grid[r][c].reset();
         }
     }
     for (int i = 0; i < numTiles; ++i) {
         Tile *t;
         t = new Tile(0, 0);
         stream >> *t;
-        g.grid[t->getRow()][t->getCol()] = t;
+        g.grid[t->getRow()][t->getCol()] = tilePtr(t);
     }
     g.undoStack.clear();
     return stream;

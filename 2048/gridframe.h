@@ -24,7 +24,6 @@ protected:
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void keyPressEvent(QKeyEvent *event) override;
 private:
-    //Grid *grid;  //TODO use smart pointer
     std::unique_ptr<Grid> grid;
     int leftBorder;
     const int borderWidth = 4;

@@ -51,7 +51,7 @@ void GridFrame::loadGrid(QDataStream &in)
 void GridFrame::paintEvent(QPaintEvent *event)
 {
     QFrame::paintEvent(event);
-    if (grid == nullptr) {
+    if (!grid) {
         return;
     }
     QPainter painter(this);
@@ -101,7 +101,7 @@ QSize GridFrame::sizeHint() const
 
 void GridFrame::resizeEvent(QResizeEvent *event)
 {
-    if (grid == nullptr) {
+    if (!grid) {
         return;
     }
     if (event->size().width() > event->size().height()) {

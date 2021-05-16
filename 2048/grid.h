@@ -4,8 +4,12 @@
 #include "tile.h"
 #include <QPoint>
 #include <deque>
+#include <memory>
 
+using std::vector;
 using std::deque;
+using tilePtr = std::unique_ptr<Tile>;
+
 class GridSnapshot;
 
 class Grid
@@ -25,8 +29,7 @@ public:
     friend QDataStream& operator>>(QDataStream &stream, Grid &g);
 private:
     bool insertRandomTile();
-    //TODO use unique_ptr<Tile> instead of Tile *
-    QVector<QVector<Tile *>> grid;
+    vector<vector<tilePtr>> grid;
     QList<QPoint> available() const;
     int size;
     int score;
