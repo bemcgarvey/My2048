@@ -36,7 +36,7 @@ private:
     int largestTile;
     int moves;
     int emptySpaces;
-    unsigned int undoDepth;
+    const unsigned int undoDepth = 10;
     deque<GridSnapshot> undoStack;
 };
 

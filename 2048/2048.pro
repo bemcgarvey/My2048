@@ -45,4 +45,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     images.qrc
 
-win32:RC_ICONS += images/icon.ico
+win32 {
+    RC_ICONS += images/icon.ico
+    VERSION = 1.0.0.0
+    QMAKE_TARGET_COMPANY = QES
+    QMAKE_TARGET_DESCRIPTION = 2048.exe
+    QMAKE_TARGET_COPYRIGHT = Copyright 2021 QES
+    QMAKE_TARGET_PRODUCT = My2048
+}

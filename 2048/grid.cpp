@@ -4,7 +4,7 @@
 #include "gridsnapshot.h"
 
 Grid::Grid(int size, int startTile) : size(size), score(0)
-  , largestTile(2), moves(0), emptySpaces(size * size), undoDepth(10)
+  , largestTile(2), moves(0), emptySpaces(size * size)
 {
     for (int i = 0; i < size; ++i) {
         grid.push_back(vector<tilePtr>(size));
@@ -256,7 +256,7 @@ QList<QPoint> Grid::available() const
 }
 
 QDataStream& operator<<(QDataStream &stream, const Grid &g) {
-    stream << g.size << g.score << g.moves << g.largestTile << g.undoDepth;
+    stream << g.size << g.score << g.moves << g.largestTile;
     stream << ((g.size * g.size) - g.emptySpaces);
     for (int r = 0; r < g.size; ++r) {
         for (int c = 0; c < g.size; ++c) {
@@ -269,7 +269,7 @@ QDataStream& operator<<(QDataStream &stream, const Grid &g) {
 }
 
 QDataStream& operator>>(QDataStream &stream, Grid &g) {
-    stream >> g.size >> g.score >> g.moves >> g.largestTile >> g.undoDepth;
+    stream >> g.size >> g.score >> g.moves >> g.largestTile;
     int numTiles;
     stream >> numTiles;
     for (int r = 0; r < g.size; ++r) {

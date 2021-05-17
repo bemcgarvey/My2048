@@ -33,6 +33,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->statusbar->addWidget(new QLabel("  "));
     ui->statusbar->addWidget(new QLabel("Moves:"));
     ui->statusbar->addWidget(movesLabel);
+    QStringList c = QCoreApplication::arguments();
+    if (c.size() > 1) {
+        openSavedGame(c.at(1));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -106,6 +110,16 @@ void MainWindow::restartGame()
     ui->gridFrame->setGrid(new Grid(currentGridSize, currentStartTiles));
     onScoreUpdate(0, 0, 0);
     hasBeenWon = false;
+}
+
+void MainWindow::openSavedGame(QString fileName)
+{
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);
+    QDataStream in(&file);
+    in >> currentGridSize >> currentStartTiles >> winningTile;
+    ui->gridFrame->loadGrid(currentGridSize, in);
+    file.close();
 }
 
 
@@ -185,12 +199,7 @@ void MainWindow::on_actionOpen_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, "Open game", "", "2048 Games (*.2048)");
     if (fileName.length() > 0) {
-        QFile file(fileName);
-        file.open(QIODevice::ReadOnly);
-        QDataStream in(&file);
-        in >> currentGridSize >> currentStartTiles >> winningTile;
-        ui->gridFrame->loadGrid(currentGridSize, in);
-        file.close();
+        openSavedGame(fileName);
     }
 }
 

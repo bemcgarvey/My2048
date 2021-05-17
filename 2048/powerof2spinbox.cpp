@@ -1,5 +1,4 @@
 #include "powerof2spinbox.h"
-#include <QDebug>
 
 PowerOf2SpinBox::PowerOf2SpinBox(QWidget *parent) : QSpinBox(parent)
 {

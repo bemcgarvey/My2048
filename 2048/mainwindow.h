@@ -42,6 +42,7 @@ private:
     int largestTile;
     int currentGridSize;
     int currentStartTiles;
+    void openSavedGame(QString fileName);
 protected:
     virtual void closeEvent(QCloseEvent *event) override;
 };
