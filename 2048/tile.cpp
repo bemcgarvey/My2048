@@ -57,6 +57,8 @@ QDataStream& operator>>(QDataStream &stream, Tile &t) {
     return stream;
 }
 
-//TODO select a good set of colors
-QVector<QColor> Tile::colorList = {Qt::yellow, Qt::magenta, Qt::green, Qt::blue, Qt::red, Qt::darkYellow, QColor(128, 128, 128), QColor(36, 250, 198)};
-QVector<QColor> Tile::fontColors = {Qt::blue, Qt::yellow, Qt::white, Qt::white, Qt::lightGray, Qt::white};
+QVector<QColor> Tile::colorList = {Qt::yellow, Qt::magenta, Qt::green, Qt::blue, Qt::red, QColor(73, 225, 138)
+                                   , QColor(230, 27, 218), QColor(241, 180, 16), QColor(173, 83, 171)
+                                   , QColor(34, 216, 223), QColor(87, 96, 211)};
+QVector<QColor> Tile::fontColors = {Qt::blue, Qt::yellow, Qt::white, Qt::yellow, Qt::black, Qt::white
+                                   , Qt::black, Qt::white, Qt::red, Qt::white, Qt::yellow};
