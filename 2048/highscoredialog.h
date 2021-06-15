@@ -14,7 +14,7 @@ class HighScoreDialog : public QDialog
 public:
     explicit HighScoreDialog(QWidget *parent = nullptr);
     ~HighScoreDialog();
-    void setScores(int highScore, int mostMoves, int largestTile);
+    void setScores(int highScore, int leastMoves, int largestTile);
 private slots:
     void on_pushButton_clicked();
     void on_clearScoresPushButton_clicked();

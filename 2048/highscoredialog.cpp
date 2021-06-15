@@ -14,10 +14,14 @@ HighScoreDialog::~HighScoreDialog()
     delete ui;
 }
 
-void HighScoreDialog::setScores(int highScore, int mostMoves, int largestTile)
+void HighScoreDialog::setScores(int highScore, int leastMoves, int largestTile)
 {
     ui->highScoreLabel->setText(QString::number(highScore));
-    ui->mostMovesLabel->setText(QString::number(mostMoves));
+    if (leastMoves == INT_MAX) {
+        ui->leastMovesLabel->setText("---");
+    } else {
+        ui->leastMovesLabel->setText(QString::number(leastMoves) + " moves");
+    }
     ui->largestTileLabel->setText(QString::number(largestTile));
 }
 
@@ -32,7 +36,7 @@ void HighScoreDialog::on_clearScoresPushButton_clicked()
     if (QMessageBox::question(this, QApplication::applicationName()
                               , "Are you sure you want to clear high scores?") == QMessageBox::Yes) {
         emit clearScores();
-        setScores(0, 0, 2);
+        setScores(0, INT_MAX, 2);
     }
 }
 

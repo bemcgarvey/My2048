@@ -38,7 +38,7 @@ private:
     bool hasBeenWon;
     void restartGame();
     int highScore;
-    int mostMoves;
+    int leastMoves;
     int largestTile;
     int currentGridSize;
     int currentStartTiles;

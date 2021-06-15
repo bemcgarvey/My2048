@@ -12,12 +12,12 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), winningTile(2048), hasBeenWon(false)
-    , highScore(0), mostMoves(0), largestTile(2), currentGridSize(4)
+    , highScore(0), leastMoves(INT_MAX), largestTile(2), currentGridSize(4)
     , currentStartTiles(2)
 {
     QSettings settings;
     highScore = settings.value("High Score", 0).toInt();
-    mostMoves = settings.value("Most Moves", 0).toInt();
+    leastMoves = settings.value("Least Moves", INT_MAX).toInt();
     largestTile = settings.value("Largest Tile", 2).toInt();
     winningTile = settings.value("Winning Tile", 2048).toInt();
     currentGridSize = settings.value("Grid Size", 4).toInt();
@@ -49,15 +49,15 @@ void MainWindow::onScoreUpdate(int score, int moves, int largestTile)
     if (score > highScore) {
         highScore = score;
     }
-    if (moves > mostMoves) {
-        mostMoves = moves;
-    }
     if (largestTile > this->largestTile) {
         this->largestTile = largestTile;
     }
     scoreLabel->setText(QString::number(score));
     movesLabel->setText(QString::number(moves));
     if (!hasBeenWon && largestTile >= winningTile) {
+        if (winningTile == 2048 && moves < leastMoves) {
+            leastMoves = moves;
+        }
         if (QMessageBox::question(this, QApplication::applicationName()
                                   , "You Win.  Do you want to keep playing?") == QMessageBox::Yes) {
             hasBeenWon = true;
@@ -82,7 +82,7 @@ void MainWindow::onClearScores()
     QSettings settings;
     settings.clear();
     highScore = 0;
-    mostMoves = 0;
+    leastMoves = INT_MAX;
     largestTile = 2;
     closeEvent(nullptr);
 }
@@ -129,7 +129,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     Q_UNUSED(event);
     QSettings settings;
     settings.setValue("High Score", highScore);
-    settings.setValue("Most Moves", mostMoves);
+    settings.setValue("Least Moves", leastMoves);
     settings.setValue("Largest Tile", largestTile);
     settings.setValue("Winning Tile", winningTile);
     settings.setValue("Grid Size", currentGridSize);
@@ -169,7 +169,7 @@ void MainWindow::on_actionOptions_triggered()
 void MainWindow::on_actionHigh_Score_triggered()
 {
     std::unique_ptr<HighScoreDialog> dlg(new HighScoreDialog(this));
-    dlg->setScores(highScore, mostMoves, largestTile);
+    dlg->setScores(highScore, leastMoves, largestTile);
     connect(dlg.get(), &HighScoreDialog::clearScores, this, &MainWindow::onClearScores);
     dlg->exec();
 }
