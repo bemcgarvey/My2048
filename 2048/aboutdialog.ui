@@ -36,7 +36,7 @@
    <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Version 1.1</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 1.2&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>

@@ -131,11 +131,11 @@ bool GridFrame::event(QEvent *event)
     case QEvent::TouchEnd:
     {
         QTouchEvent *te = static_cast<QTouchEvent *>(event);
-        QList<QTouchEvent::TouchPoint> touchPoints = te->touchPoints();
+        QList<QTouchEvent::TouchPoint> touchPoints = te->points();
         if (touchPoints.size() == 1) {
             const QTouchEvent::TouchPoint& tp = touchPoints[0];
-            int x = tp.lastPos().x() - tp.startPos().x();
-            int y = tp.lastPos().y() - tp.startPos().y();
+            int x = tp.lastPosition().x() - tp.pressPosition().x();
+            int y = tp.lastPosition().y() - tp.pressPosition().y();
             if (abs(x) > abs(y)) {
                 if (x > 0) {
                     shiftGrid(Grid::shiftRight);
